@@ -1,6 +1,8 @@
 import sklearn
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import OneHotEncoder
+
 
 train = pd.read_csv("..\\Data\\train.csv") #read train dataset
 test = pd.read_csv("..\\Data\\test.csv")   #read test dataset
@@ -23,6 +25,7 @@ for colName in x.columns:
     else:
         print "Oops! Unknown ColName encountered"
         
+
         
 
 
