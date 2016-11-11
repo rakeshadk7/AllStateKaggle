@@ -23,4 +23,4 @@ for cat_column_name in _cat:
                     cat_column_name, uniq_value)] = 0
 
 
-# Trying to create s[arse matrix so that we can feed the data into XGBoost
+# Trying to create sparse matrix so that we can feed the data into XGBoost
