@@ -1,3 +1,10 @@
+#C:\Users\RAdhikesavan\Documents\Personal\Kaggle\Code
+
+import os
+
+#Change working directory
+os.chdir("C:\Users\RAdhikesavan\Documents\Personal\Kaggle\Code")
+
 import sklearn
 import pandas as pd
 import numpy as np
@@ -13,31 +20,46 @@ x = train.drop(['loss','id'], 1)
 y = np.log1p(train["loss"]) #Apply log 1 + loss. Note: remeber to subtract shift when getting end result
 ids = test['id'] #needed for writing results.csv
 
-'''
-Split the features into continuous and categorical,
-Simpler way to do this is to just read first 116 columns as categorical and the remaining as continious.
-But I hate hardcoding, so .... 
-'''
 cat = []
 cont = []
-for colName in x.columns:
-    if colName.startswith("cat"):
-        cat.append(colName)
-    elif colName.startswith("cont"):
-        cont.append(colName)
-    else:
-        print "Oops! Unknown ColName encountered"
+columns = list(train)
 
-'''    
-le = LabelEncoder() 
-oHe = OneHotEncoder()
-x[cat] = x[cat].apply(le.fit_transform, axis = 1) #Apply encoder to all columns with categorical features 
-
-'''
+cat = [x for x in columns if x.startswith("cat")]
+con = [x for x in columns if x.startswith("con")]
 
 
+#Get the unique set of category labels for each column
+labels = {}
+for colName in cat:
+    trainLabels = train[colName].unique() 
+    testLabels = test[colName].unique()
+    labels[colName] = (list(set(trainLabels) | set(testLabels))) 
 
+le = LabelEncoder()
+catTrainFeatures = []
+catTestFeatures = []
 
+for col in cat:
+    #Label encode Train and Test with the same encoder    
+    le.fit(labels[col])
+    trainFeature = le.transform(train[col])
+    trainFeature = trainFeature.reshape(train.shape[0],1)
+    
+    testFeature = le.transform(test[col])
+    testFeature = testFeature.reshape(test.shape[0],1)
+    
+    #One hot encode
+    onehot_encoder = OneHotEncoder(sparse=False,n_values=len(labels[col]))
+    trainFeature = onehot_encoder.fit_transform(trainFeature)
+    
+    catTrainFeatures.append(trainFeature)
+    catTestFeatures.append(testFeature)
+    
+catTrainFeatures = np.column_stack(catTrainFeatures)
+catTestFeatures = np.column_stack(catTestFeatures)
+
+trainData = np.concatenate((catTrainFeatures, train[cont]),axis=1)
+testData = np.concatenate((catTestFeatures, test[cont]),axis=1)
 
 
 
