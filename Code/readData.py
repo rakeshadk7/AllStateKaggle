@@ -22,10 +22,10 @@ ids = test['id'] #needed for writing results.csv
 
 cat = []
 cont = []
-columns = list(train)
+columns = list(train) #All column names
 
-cat = [x for x in columns if x.startswith("cat")]
-con = [x for x in columns if x.startswith("con")]
+cat = [x for x in columns if x.startswith("cat")] #Categorical Features
+con = [x for x in columns if x.startswith("con")] #Continuous Features
 
 
 #Get the unique set of category labels for each column
